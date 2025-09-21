@@ -22,117 +22,75 @@ In this assignment, there are 🎯 Two Architectures: **Architecture 1 (End-to-e
 ## 🏗️ Architecture Diagrams
 
 ### **Architecture 1: End-to-End CNN**
-```
-Input: Combined Image (28x56)     Operation Info
-        [digit1][digit2]              [op_code]
-               │                         │
-               ▼                         │
-        ┌─────────────┐                  │
-        │   Conv2D    │                  │
-        │  (1→32→64→  │                  │
-        │   →128)     │                  │
-        │             │                  │
-        │  MaxPool    │                  │
-        │  Dropout    │                  │
-        └─────────────┘                  │
-               │                         │
-               ▼                         │
-        ┌─────────────┐                  │
-        │   Flatten   │                  │
-        │     FC      │                  │
-        │ (2688→512→  │                  │
-        │   →256)     │                  │
-        └─────────────┘                  │
-               │                         │
-               ▼                         │
-        [Image Features: 256]            │
-               │                         │
-               └────────┬────────────────┘
-                        ▼
-               ┌─────────────────┐
-               │   Concatenate   │
-               │ [256 + 1 = 257] │
-               └─────────────────┘
-                        │
-                        ▼
-               ┌─────────────────┐
-               │   Classifier    │
-               │   (257→91)      │
-               └─────────────────┘
-                        │
-                        ▼
-              [Arithmetic Result: 0-90]
 
-**Loss Function**: CrossEntropyLoss
-• Single-task learning: Direct mapping from image to arithmetic result
-• 91 output classes (0-90 for addition/multiplication results)
-• End-to-end optimization of entire pipeline
-**Model** has 1,624,246 parameters
+```mermaid
+graph TD
+    A["Combined Image<br/>(28×56)"] --> B["Conv2D Layers<br/>(1→32→64→128)<br/>MaxPool + Dropout"]
+    C["Operation Info<br/>[op_code]"] --> B
+    B --> D["Flatten + FC<br/>(2688→512→256)"]
+    D --> E["Image Features<br/>(256)"]
+    E --> F["Concatenate<br/>[256 + 1 = 257]"]
+    C --> F
+    F --> G["Classifier<br/>(257→91)"]
+    G --> H["Arithmetic Result<br/>(0-90)"]
+
+    style A fill:#e1f5fe
+    style C fill:#f3e5f5
+    style H fill:#e8f5e8
+    style B fill:#fff3e0
+    style D fill:#fff3e0
+    style F fill:#fce4ec
+    style G fill:#fce4ec
 ```
+
+**Key Features:**
+- **Loss Function**: CrossEntropyLoss
+- **Single-task learning**: Direct mapping from image to arithmetic result
+- **91 output classes** (0-90 for addition/multiplication results)
+- **End-to-end optimization** of entire pipeline
+- **Model has 1,624,246 parameters**
 
 ### **Architecture 2: Multi-Task CNN**
+
+```mermaid
+graph TD
+    A["Combined Image<br/>(28×56)"] --> B["Split<br/>28×56 → 2×(28×28)"]
+    B --> C["Shared CNN<br/>Digit 1"]
+    B --> D["Shared CNN<br/>Digit 2"]
+    C --> E["Digit1 Prediction<br/>(10 classes)"]
+    D --> F["Digit2 Prediction<br/>(10 classes)"]
+    E --> G["Concatenate<br/>[10 + 10 + 1 = 21]"]
+    F --> G
+    H["Operation Info<br/>[op_code]"] --> G
+    G --> I["Operation MLP<br/>(21→128→64)"]
+    I --> J["Classifier<br/>(64→91)"]
+    J --> K["Arithmetic Result<br/>(0-90)"]
+
+    style A fill:#e1f5fe
+    style H fill:#f3e5f5
+    style E fill:#e8f5e8
+    style F fill:#e8f5e8
+    style K fill:#e8f5e8
+    style C fill:#fff3e0
+    style D fill:#fff3e0
+    style B fill:#fff3e0
+    style G fill:#fce4ec
+    style I fill:#fce4ec
+    style J fill:#fce4ec
 ```
-Input: Combined Image (28x56)
-        [digit1][digit2]
-               │
-               ▼
-        ┌─────────────┐
-        │    Split    │
-        │   28x56 →   │
-        │ 2×(28x28)   │
-        └─────────────┘
-               │
-        ┌──────┴──────┐
-        │             │
-        ▼             ▼
- ┌─────────────┐ ┌─────────────┐
- │ Shared CNN  │ │ Shared CNN  │
- │   (28x28)   │ │   (28x28)   │
- │    │ │ │    │ │    │ │ │    │
- │ Conv→Pool   │ │ Conv→Pool   │
- │ →BatchNorm  │ │ →BatchNorm  │
- │    FC       │ │    FC       │
- └─────────────┘ └─────────────┘
-        │             │
-        ▼             ▼
-   [Digit1: 10]  [Digit2: 10]     Operation Info
-        │             │              [op_code]
-        └──────┬──────┘                  │
-               │                         │
-               ▼                         │
-        ┌─────────────────┐             │
-        │   Concatenate   │             │
-        │ [10 + 10 + 1]   │◄────────────┘
-        │    = 21         │
-        └─────────────────┘
-               │
-               ▼
-        ┌─────────────────┐
-        │ Operation MLP   │
-        │  (21→128→64)    │
-        └─────────────────┘
-               │
-               ▼
-        ┌─────────────────┐
-        │   Classifier    │
-        │    (64→91)      │
-        └─────────────────┘
-               │
-               ▼
-      [Arithmetic Result: 0-90]
 
-**Loss Function**: Multi-task Weighted Loss
-• Combined loss: `result_loss + 0.3 * (digit1_loss + digit2_loss)`
-• Three CrossEntropyLoss functions for each output
-• Multi-task learning with explicit digit recognition
+**Key Features:**
+- **Loss Function**: Multi-task Weighted Loss
+- **Combined loss**: `result_loss + 0.3 * (digit1_loss + digit2_loss)`
+- **Three CrossEntropyLoss** functions for each output
+- **Multi-task learning** with explicit digit recognition
 
-**Multi-task Outputs**:
-• Digit 1 prediction (10 classes)
-• Digit 2 prediction (10 classes)
-• Arithmetic result (91 classes)
+**Multi-task Outputs:**
+- Digit 1 prediction (10 classes)
+- Digit 2 prediction (10 classes)
+- Arithmetic result (91 classes)
 
-**Model** has 407,845 parameters
-```
+**Model has 407,845 parameters**
 
 ## 🚀 Quick Start
 
