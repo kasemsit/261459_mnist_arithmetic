@@ -136,7 +136,13 @@ Input: Combined Image (28x56)
 
 ## 🚀 Quick Start
 
-1. **Create and activate virtual environment**:
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/kasemsit/261459_mnist_arithmetic
+   cd 261459_mnist_arithmetic
+   ```
+
+2. **Create and activate virtual environment**:
    ```bash
    # Create virtual environment
    python -m venv mnist_env
@@ -148,17 +154,17 @@ Input: Combined Image (28x56)
    # mnist_env\Scripts\activate
    ```
 
-2. **Install dependencies**:
+3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Test the dataset**:
+4. **Test the dataset**:
    ```bash
    python dataset.py
    ```
 
-4. **Run training (after implementing templates)**:
+5. **Run training (after implementing templates)**:
    ```bash
    # For Architecture 1
    python main1.py
