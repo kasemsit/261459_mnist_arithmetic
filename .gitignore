@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+mnist_env/
+venv/
+env/
+ENV/
+
+# PyTorch model files and training outputs
+*.pth
+*.pt
+best_model_*.pth
+training_results_*.pth
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Data files (if any large datasets are added)
+data/
+datasets/
+*.zip
+*.tar.gz
+
+# Logs
+*.log
+logs/
+
+# Reports and documentation (students will submit these)
+report.pdf
+*.docx
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# MNIST dataset cache (if downloaded)
+MNIST/
+mnist/
