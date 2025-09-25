@@ -25,12 +25,11 @@ In this assignment, there are 🎯 Two Architectures: **Architecture 1 (End-to-e
 
 ```mermaid
 graph TD
-    A["Combined Image<br/>(28×56)"] --> B["Conv2D Layers<br/>(1→32→64→128)<br/>MaxPool + Dropout"]
-    C["Operation Info<br/>[op_code]"] --> B
+    A["Combined Image<br/>(28×56)"] --> B["Conv2D Layers<br/>(1→32→64→128)<br/>MaxPool + Dropout"]    
     B --> D["Flatten + FC<br/>(2688→512→256)"]
     D --> E["Image Features<br/>(256)"]
     E --> F["Concatenate<br/>[256 + 1 = 257]"]
-    C --> F
+    C["Operation Info<br/>[op_code]"] --> F
     F --> G["Classifier<br/>(257→91)"]
     G --> H["Arithmetic Result<br/>(0-90)"]
 
